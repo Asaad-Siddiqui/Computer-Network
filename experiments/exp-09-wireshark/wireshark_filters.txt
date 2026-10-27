@@ -1,0 +1,39 @@
+Exp 9 - Wireshark filters (copy and paste)
+
+A) CAPTURE FILTERS - set BEFORE starting the capture
+   (Capture Options > Capture Filter. Capture filters use pcap syntax.
+   They cannot filter by website name - resolve the name to IPs first
+   with nslookup, e.g. nslookup facebook.com.)
+   All TCP traffic:                       tcp
+   All web (HTTPS) traffic:               tcp port 443
+   TCP to/from specific IPs you resolved: tcp and (host <IP1> or host <IP2>)
+
+B) DISPLAY FILTERS - type in the filter bar AFTER capturing
+   All TCP packets:                       tcp
+   SYN set:                               tcp.flags.syn == 1
+   PSH set:                               tcp.flags.psh == 1
+   RST set:                               tcp.flags.rst == 1
+   One site by TLS server name:           tls.handshake.extensions_server_name contains "facebook"
+                                          (use "instagram" / "youtube" the same way)
+   One site by IP:                        ip.addr == <IP>
+   HTTP packets only:                     http
+   HTTP packets to/from one site:         ip.addr == <IP> && http
+
+C) COUNTING AND FRACTIONS (Exp 9b and 9c)
+   GUI way: apply a display filter and read the status bar
+   "Displayed: X packets (Y%)" - Y% is the fraction of the whole capture.
+   For "fraction of TCP packets with SYN set": filter 'tcp', note the total,
+   then filter 'tcp.flags.syn == 1' and divide: SYN count / total TCP count.
+   Do the same for PSH and RST.
+   Command-line way (same capture file, needs tshark):
+     tshark -r capture.pcapng -Y tcp -T fields -e frame.number | wc -l
+     tshark -r capture.pcapng -Y "tcp.flags.syn == 1" -T fields -e frame.number | wc -l
+     tshark -r capture.pcapng -Y "tcp.flags.psh == 1" -T fields -e frame.number | wc -l
+     tshark -r capture.pcapng -Y "tcp.flags.rst == 1" -T fields -e frame.number | wc -l
+
+D) HONEST NOTE FOR THE REPORT
+   Facebook / Instagram / YouTube use HTTPS (TLS on port 443), NOT plain HTTP.
+   So the 'http' packet count for those sites will be about 0. That is a
+   correct result, not a failed capture - write it down and say why.
+   If a non-zero HTTP count is needed, capture a plain-HTTP site separately
+   and label it separately.

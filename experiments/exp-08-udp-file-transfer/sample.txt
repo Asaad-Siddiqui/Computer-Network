@@ -1,0 +1,4 @@
+This is a sample file sent from the UDP client to the UDP server
+in Computer Networks Experiment 8 (UDP file transfer).
+If this text appears in received_sample.txt on the receiver,
+the transfer worked.

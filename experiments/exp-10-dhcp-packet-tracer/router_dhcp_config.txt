@@ -1,0 +1,30 @@
+Exp 10 - Router as DHCP server (reference config)
+Paste into the router CLI in Packet Tracer: enable, then configure terminal.
+Adjust the interface name (GigabitEthernet0/0) to match your topology.
+
+enable
+configure terminal
+hostname R1
+interface GigabitEthernet0/0
+ ip address 192.168.1.1 255.255.255.0
+ no shutdown
+ exit
+ip dhcp excluded-address 192.168.1.1 192.168.1.10
+ip dhcp pool LAN-POOL
+ network 192.168.1.0 255.255.255.0
+ default-router 192.168.1.1
+ dns-server 8.8.8.8
+ lease 1
+ exit
+end
+
+Verify on the router:
+  show ip dhcp pool
+  show ip dhcp binding
+  show ip interface brief
+
+On each PC: Desktop > IP Configuration > DHCP, then Command Prompt:
+  ipconfig /renew
+  ipconfig /all
+Look for a leased address (for example 192.168.1.11) and
+DHCP Server 192.168.1.1.
